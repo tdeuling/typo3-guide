@@ -248,7 +248,7 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 			}
 		});
 	};
-	
+
 	return function() {
 		Logger.log("Start up guided tour");
 		// Bind button events
@@ -332,15 +332,12 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 					}
 					// Get tours
 					top.TYPO3.Guide.TourData = result.tours;
-					// Init core tours
-					if(typeof(top.TYPO3.Guide.TourData['Tree']) !== 'undefined') {
-						top.TYPO3.Guide.loadTour('Tree', false);
-					}
-					if(typeof(top.TYPO3.Guide.TourData['Menu']) !== 'undefined') {
-						top.TYPO3.Guide.loadTour('Menu', false);
-					}
-					if(typeof(top.TYPO3.Guide.TourData['Topbar']) !== 'undefined') {
-						top.TYPO3.Guide.loadTour('Topbar', false);
+
+					// Bugfix: Always initialize *all* tours because of the
+					// required tour data may be missing upon startTour() execution
+					for (var key in top.TYPO3.Guide.TourData) {
+						top.TYPO3.Guide.loadTour(key);
+						Logger.log('Init tour on start already: ', key);
 					}
 				}
 			});
@@ -357,11 +354,9 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 
 			// Restart a tour
 			else if(typeof top.TYPO3.Guide.restartTourName !== 'undefined' && top.TYPO3.Guide.restartTourName !== '') {
-				// First! End some tours
-				top.TYPO3.Guide.Tours.Menu.end();
-				top.TYPO3.Guide.Tours.Tree.end();
-				top.TYPO3.Guide.Tours.Topbar.end();
-				// Now grab the reminded tour.
+				// First end some tours
+				top.TYPO3.Guide.end();
+				// Now grab the reminded tour
 				top.TYPO3.Guide.currentTourName = top.TYPO3.Guide.restartTourName;
 				top.TYPO3.Guide.restartTourName = '';
 				Logger.log('Restart: ', top.TYPO3.Guide.currentTourName);
