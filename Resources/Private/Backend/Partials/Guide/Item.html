@@ -1,7 +1,5 @@
 {namespace core = TYPO3\CMS\Core\ViewHelpers}
-<!--
-@todo translation and section
--->
+
 <div class="col-xs-12 col-sm-6">
 	<div class="tour-item media clearfix" id="{tour.id}">
 		<a href="#" data-onclick="startTour" data-tour="{tour.name}" data-step-no="0"
@@ -14,11 +12,13 @@
 				<f:if condition="{tour.alreadyViewed}">
 					<f:then>
 						<f:if condition="{tour.currentStepNo} == 0">
-							<f:then>Sie haben diese Tour bereits gesehen.</f:then>
-							<f:else>Sie haben diese Tour noch nicht komplett gesehen.</f:else>
+							<f:then><f:translate key="tx_guide_label.tour_seen"/></f:then>
+							<f:else><f:translate key="tx_guide_label.tour_partially_seen"/></f:else>
 						</f:if>
 					</f:then>
-					<f:else>Sie haben diese Tour noch nicht gesehen.</f:else>
+					<f:else>
+						<f:translate key="tx_guide_label.tour_unseen"/>
+					</f:else>
 				</f:if>
 			</small><br>
 			<p>{tour.description}</p>

@@ -3,11 +3,11 @@
 	<file source-language="en" datatype="plaintext" original="messages" date="2014-09-23T15:21:54Z" product-name="guide">
 		<header/>
 		<body>
-
+			<!-- Backend Module -->
 			<trans-unit id="tx_guide_label.module_menu_overview">
 				<source>Overview</source>
 			</trans-unit>
-			
+
 			<trans-unit id="tx_guide_label.headline">
 				<source>Guided tours trough TYPO3</source>
 			</trans-unit>
@@ -21,6 +21,16 @@
 			<trans-unit id="tx_guide_label.available_module_guided_tours">
 				<source>Available module guided tours</source>
 			</trans-unit>
+
+			<trans-unit id="tx_guide_label.tour_seen">
+				<source>You have already seen this tour.</source>
+			</trans-unit>
+			<trans-unit id="tx_guide_label.tour_partially_seen">
+				<source>You have not seen this tour completely yet.</source>
+			</trans-unit>
+			<trans-unit id="tx_guide_label.tour_unseen">
+				<source>You have not seen this tour.</source>
+			</trans-unit>
 			<trans-unit id="tx_guide_label.enable_tour">
 				<source>Enable tour</source>
 			</trans-unit>
@@ -33,8 +43,8 @@
 			<trans-unit id="tx_guide_label.resume_tour_on_step">
 				<source>Resume tour</source>
 			</trans-unit>
-			
-			<!-- Frontend -->
+
+			<!-- Tour Steps -->
 			<trans-unit id="tx_guide_tour.next">
 				<source>Next</source>
 			</trans-unit>
@@ -50,7 +60,6 @@
 			<trans-unit id="tx_guide_tour.show_again">
 				<source>Don't show again</source>
 			</trans-unit>
-			
 		</body>
 	</file>
 </xliff>
