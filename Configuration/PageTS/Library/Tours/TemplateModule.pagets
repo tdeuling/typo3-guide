@@ -3,7 +3,7 @@ mod.guide.tours.TemplateModule {
 	description = LLL:EXT:guide/Resources/Private/Language/BootstrapTourTemplateModule.xlf:tx_guide_tour.description
 	moduleName = web_ts
 	iconIdentifier = module-web_ts
-    steps {
+	steps {
 		10 {
 			selector = .module-docheader
 			title = Template module
@@ -16,6 +16,7 @@ mod.guide.tours.TemplateModule {
 				stepByKey = template-module-button
 			}
 		}
+
 		20 {
 			selector = select[data-menu-identifier='web-func-jump-menu']
 			title = Module menu
@@ -29,18 +30,21 @@ mod.guide.tours.TemplateModule {
 			content = Here you're able to switch between different TypoScript templates, which might be on this page.
 			placement = bottom
 		}
+
 		210 {
 			selector = select[data-menu-identifier='constant-editor-cat']
 			title = Constants categories
 			content = Here you're able to switch between different constant categories.
 			placement = bottom
 		}
+
 		220 {
 			selector = .tstemplate-constanteditor
 			title = Constants
 			content = The following table allows you to modify the TypoScript constants from the selected category.
 			placement = top
 		}
+
 		230 {
 			selector = span[data-identifier='actions-open']:first
 			title = Constants
@@ -48,10 +52,5 @@ mod.guide.tours.TemplateModule {
 			placement = left
 			click = true
 		}
-
-
-
-
-
-    }
+	}
 }
