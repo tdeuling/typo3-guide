@@ -240,7 +240,6 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 		});
 	};
 
-
 	top.TYPO3.Guide.getTourNameByModuleName = function() {
 		jQuery.each(top.TYPO3.Guide.TourData, function(tourName, tour) {
 			if(tour.moduleName === top.TYPO3.Guide.currentModule) {
@@ -248,9 +247,17 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 			}
 		});
 	};
-	
+
+
+
+	/**
+	 * Start Guide Tour Script
+	 *
+	 * Bind events, load all tours, (re)start current tour
+	 */
 	return function() {
-		Logger.log("Start up guided tour");
+		Logger.log("Start up guided tours");
+
 		// Bind button events
 		var onclickEnableTour = jQuery('a[data-onclick=\'enableTour\']');
 		if(onclickEnableTour.length>0) {
@@ -309,17 +316,18 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 				return false;
 			});
 		}
+
 		// Executed within a frame?
 		var inFrame = false;
 		if(window.top !== window.self) {
 			inFrame = true;
 		}
-		// Get module identifier
+		// Get current module identifier
 		var currentModuleId = top.TYPO3.Guide.getUrlParameterByName('M', window.location.href);
-		var isLoggedIn =  top.TYPO3.Guide.getUrlParameterByName('token', window.location.href) !== null || currentModuleId !== null;
-		// Logged in and in top frame
+		var isLoggedIn = top.TYPO3.Guide.getUrlParameterByName('token', window.location.href) !== null || currentModuleId !== null;
+		// Logged in and no frame/module selected yet
 		if(isLoggedIn && !inFrame) {
-			// Get all tours
+			// First get all tours via Ajax
 			jQuery.ajax({
 				dataType: 'json',
 				url: TYPO3.settings.ajaxUrls['GuideController::ajaxRequest'],
@@ -330,9 +338,10 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 					if(result.debug) {
 						Logger.enableLogger();
 					}
-					// Get tours
+					// Get all available tours via Ajax
 					top.TYPO3.Guide.TourData = result.tours;
-					// Init core tours
+
+					// Initialize core tours, if available
 					if(typeof(top.TYPO3.Guide.TourData['Tree']) !== 'undefined') {
 						top.TYPO3.Guide.loadTour('Tree', false);
 					}
@@ -347,7 +356,6 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 		}
 		// Init frame tours
 		if(inFrame) {
-			//top.TYPO3.Guide.end();
 			// Current identifier
 			top.TYPO3.Guide.currentModule = currentModuleId;
 			// Reset current tour
@@ -357,40 +365,41 @@ define(['jquery', 'TYPO3/CMS/Guide/BootstrapTourParser', 'TYPO3/CMS/Guide/Logger
 
 			// Restart a tour
 			else if(typeof top.TYPO3.Guide.restartTourName !== 'undefined' && top.TYPO3.Guide.restartTourName !== '') {
-				// First! End some tours
-				top.TYPO3.Guide.Tours.Menu.end();
-				top.TYPO3.Guide.Tours.Tree.end();
-				top.TYPO3.Guide.Tours.Topbar.end();
-				// Now grab the reminded tour.
+				// First end some tours
+				if(typeof(top.TYPO3.Guide.TourData['Tree']) !== 'undefined') {
+					top.TYPO3.Guide.Tours.Tree.end();
+				}
+				if(typeof(top.TYPO3.Guide.TourData['Menu']) !== 'undefined') {
+					top.TYPO3.Guide.Tours.Menu.end();
+				}
+				if(typeof(top.TYPO3.Guide.TourData['Topbar']) !== 'undefined') {
+					top.TYPO3.Guide.Tours.Topbar.end();
+				}
+				// Now grab the reminded tour
 				top.TYPO3.Guide.currentTourName = top.TYPO3.Guide.restartTourName;
 				top.TYPO3.Guide.restartTourName = '';
 				Logger.log('Restart: ', top.TYPO3.Guide.currentTourName);
 			}
 
-
-		//	top.TYPO3.Guide.currentTourName = '';
 			if(typeof(top.TYPO3.Guide.TourData) !== 'undefined') {
 				Logger.log('frame: tourdata is available', top.TYPO3.Guide.TourData);
 				Logger.log('frame: start currentTourname', top.TYPO3.Guide.currentTourName);
 				if((top.TYPO3.Guide.currentTourName === '' || typeof top.TYPO3.Guide.currentTourName === 'undefined') && currentModuleId === 'help_AboutAboutmodules') {
 					top.TYPO3.Guide.getTourNameByModuleName();
 				}
+
 				Logger.log('currentModule: ', top.TYPO3.Guide.currentModule);
 				Logger.log('currentTourName: ', top.TYPO3.Guide.currentTourName);
 				/**
 				 * @todo Always initialize tours because of a bug
 				 */
-				if(top.TYPO3.Guide.currentTourName !== '') {
-
-					top.TYPO3.Guide.loadTour(top.TYPO3.Guide.currentTourName, true);
+				if(top.TYPO3.Guide.currentTourName !== '' && typeof(top.TYPO3.Guide.currentTourName) !== 'undefined') {
 					if(typeof(top.TYPO3.Guide.Tours[top.TYPO3.Guide.currentTourName]) === 'undefined') {
 						Logger.log('frame: tour ' + top.TYPO3.Guide.currentTourName + ' is not available -> load');
-						//	top.TYPO3.Guide.loadTour(top.TYPO3.Guide.currentTourName, true);
+						top.TYPO3.Guide.loadTour(top.TYPO3.Guide.currentTourName, true);
 					}
-					else {
-						Logger.log('frame: tour ' + top.TYPO3.Guide.currentTourName + ' is available -> start');
-						//	top.TYPO3.Guide.startTour(top.TYPO3.Guide.currentTourName);
-					}
+					Logger.log('frame: tour ' + top.TYPO3.Guide.currentTourName + ' is available -> start');
+					top.TYPO3.Guide.startTour(top.TYPO3.Guide.currentTourName);
 				}
 			}
 			else {
